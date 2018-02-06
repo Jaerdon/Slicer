@@ -24,11 +24,6 @@ namespace Slicer.models {
             Facets = stl.GetFacets();
             return this;
         }
-    
-        // Adds a single vertex to the STL object
-        public void addVertex(double x = 0, double y = 0, double z = 0) {
-            
-        }
 
         public struct Facet {
             private Vertex[] Vertices { get; }
@@ -36,17 +31,30 @@ namespace Slicer.models {
             public Facet(Vertex[] vertices) {
                 Vertices = vertices;
             }
+
+            public override string ToString() {
+                var s = "Facet with ";
+                for (var i = 0; i < Vertices.Length; i++) {
+                    s += "V" + (i + 1) + ": " + Vertices[i] + " ";
+                }
+
+                return s;
+            }
         }
         
         public class Vertex {
-            private double X { get; }
-            private double Y { get; }
-            private double Z { get; }
+            private float X { get; }
+            private float Y { get; }
+            private float Z { get; }
 
-            public Vertex(double x = 0, double y = 0, double z = 0) {
+            public Vertex(float x = 0, float y = 0, float z = 0) {
                 X = x;
                 Y = y;
                 Z = z;
+            }
+            
+            public override string ToString() {
+                return "(" + X + ", " + Y + ", " + Z + ")";
             }
         }   
     }
