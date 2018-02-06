@@ -24,7 +24,7 @@ namespace Slicer.formats {
             } else {
                 //Binary STL Decoding
                 var triangles = BitConverter.ToInt32(bytes, 80); //First UINT32 is nuber of triangles
-                var cur = 83;
+                var cur = 84;
                 for (var i = 0; i < triangles; i++) { //TODO: Make floats for Vertices (not Facet Normal) unsigned
                     
                     //Facet Normal
