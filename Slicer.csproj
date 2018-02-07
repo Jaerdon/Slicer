@@ -39,8 +39,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\formats\FileFormats.cs" />
-    <Compile Include="src\models\Model3D.cs" />
+    <Compile Include="src\Formats\FileFormats.cs" />
+    <Compile Include="src\Models\Model3D.cs" />
     <Compile Include="src\Slicer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
