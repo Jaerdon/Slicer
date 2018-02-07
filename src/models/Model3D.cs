@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security;
-using Slicer.formats;
+﻿using Slicer.formats;
 
 namespace Slicer.models {
     
@@ -11,18 +7,16 @@ namespace Slicer.models {
         private string Name { get; set; }
         private Facet[] Facets { get; set; }
 
-        // Creates a Model3D. There is no reason this should be used as of yet.
-        public Model3D(string name = "Object", List<Facet> facets = null) {
+        // Creates a generic Model3D
+        public Model3D(string name = "Object", Facet[] facets = null) {
             Name = name;
-            Facets = facets.ToArray();
+            Facets = facets;
         }
         
         // Creates a Model3D from the specified file format. 
-        public Model3D createFromStl(string path, string name = "Object") {
+        public static Model3D CreateFromStl(string path, string name = "Object") {
             var stl = new StlFile(path);
-            Name = name;
-            Facets = stl.GetFacets();
-            return this;
+            return new Model3D(name, stl.GetFacets()); 
         }
 
         public struct Facet {

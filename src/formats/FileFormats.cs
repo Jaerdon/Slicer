@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
+using System.Text;
 using Slicer.models;
 
 namespace Slicer.formats {
@@ -14,18 +12,18 @@ namespace Slicer.formats {
 
         public StlFile(string path) {
             var bytes = File.ReadAllBytes(path);
-            Console.WriteLine(System.Text.Encoding.ASCII.GetString(bytes).Substring(0, 80));
+            Console.WriteLine(Encoding.ASCII.GetString(bytes).Substring(0, 80));
             
-            var isAscii = System.Text.Encoding.ASCII.GetString(bytes).Substring(0, 80).StartsWith("solid");
+            var isAscii = Encoding.ASCII.GetString(bytes).Substring(0, 80).StartsWith("solid");
             
             var facets = new List<Model3D.Facet>();
             if (isAscii) {
-                //ASCII STL Decoding
+                //ASCII STL Reading
             } else {
-                //Binary STL Decoding
+                //Binary STL Reading
                 var triangles = BitConverter.ToInt32(bytes, 80); //First UINT32 is nuber of triangles
                 var cur = 84;
-                for (var i = 0; i < triangles; i++) { //TODO: Make floats for Vertices (not Facet Normal) unsigned
+                for (var i = 0; i < triangles; i++) {
                     
                     //Facet Normal
                     var normal = new Model3D.Vertex(BitConverter.ToSingle(bytes, cur), 
@@ -45,6 +43,7 @@ namespace Slicer.formats {
                                                 BitConverter.ToSingle(bytes, cur + 44));
                     
                     cur += 50; //This is the additional bytes from the starting location plus the 2 Attribute bytes used for color (a single UINT16)
+                               //While we could be using the color attribute bytes, we're not because it's not necessary.
                     
                     facets.Add(new Model3D.Facet(new []{normal, v1, v2, v3}));
                 }
