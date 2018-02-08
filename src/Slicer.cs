@@ -1,4 +1,5 @@
-﻿using Slicer.models;
+﻿using System;
+using Slicer.models;
 
 namespace Slicer {
 
@@ -10,10 +11,37 @@ namespace Slicer {
         }
 
         private void Run() {
-            const string path = "Wheel v4.stl";
+            const string path = "Cube.stl";
             var model = Model3D.CreateFromStl(path);
+
+            Console.WriteLine(model.getFacets().Length);
+            for (var i = 0; i < model.getFacets().Length; i++) {
+                Console.WriteLine(i + " : " + model.getFacets()[i]);
+            }
         }
-        
+
+        private void SliceByLayer(Model3D model, float layerheight) {
+            var height = 0.0f;
+            
+            //Calculate max height of model
+            foreach (var facet in model.getFacets()) {
+                for (var i = 1; i < 4; i++) {
+                    var z = facet.GetVertices()[i].GetZ();
+                    if (z > height) height = z;
+                }    
+            }
+
+            var layercount = (long) (height / layerheight);
+            for (var layer = 0; layer < layercount; layer++) {
+                foreach (var facet in model.getFacets()) {
+                    facet
+                }
+            }
+        }
+
+        private bool CheckVertices(Model3D.Vertex a, Model3D.Vertex b, float height) {
+            return a.GetZ() > height && b.GetZ() < height || a.GetZ() < height && b.GetZ() > height;
+        } 
     }
 
 }

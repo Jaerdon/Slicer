@@ -1,4 +1,5 @@
-﻿using Slicer.formats;
+﻿using System.Collections.Generic;
+using Slicer.formats;
 
 namespace Slicer.models {
     
@@ -19,11 +20,19 @@ namespace Slicer.models {
             return new Model3D(name, stl.GetFacets()); 
         }
 
-        public struct Facet {
+        public Facet[] getFacets() {
+            return Facets;
+        }
+
+        public class Facet {
             private Vertex[] Vertices { get; }
 
             public Facet(Vertex[] vertices) {
                 Vertices = vertices;
+            }
+
+            public Vertex[] GetVertices() {
+                return Vertices;
             }
 
             public override string ToString() {
@@ -46,7 +55,11 @@ namespace Slicer.models {
                 Y = y;
                 Z = z;
             }
-            
+
+            public float GetX() { return X; }
+            public float GetY() { return Y; }
+            public float GetZ() { return Z; }
+
             public override string ToString() {
                 return "(" + X + ", " + Y + ", " + Z + ")";
             }

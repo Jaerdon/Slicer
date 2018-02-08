@@ -49,7 +49,6 @@ namespace Slicer.formats {
                 }
             }
             Facets = facets.ToArray();
-            for (var i = 0; i < Facets.Length; i++) Console.WriteLine(i + " - " + Facets[i]);
         }
         
         public Model3D.Facet[] GetFacets() {
