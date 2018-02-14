@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Specialized;
 using Slicer.models;
 
 namespace Slicer {
 
-    internal class Slicer {
+    public class Slicer {
         
         public static void Main(string[] args) {
             var slicer = new Slicer();
@@ -34,7 +35,14 @@ namespace Slicer {
             var layercount = (long) (height / layerheight);
             for (var layer = 0; layer < layercount; layer++) {
                 foreach (var facet in model.getFacets()) {
-                    facet
+                    var layerZ = layerheight * layer; 
+                    var ab = CheckVertices(facet.GetVertices()[1], facet.GetVertices()[2], layerZ);
+                    var bc = CheckVertices(facet.GetVertices()[2], facet.GetVertices()[3], layerZ);
+                    var ca = CheckVertices(facet.GetVertices()[3], facet.GetVertices()[1], layerZ);
+
+                    var pointA = new Model3D.Vertex();
+                    var pointB = new Model3D.Vertex();
+                    
                 }
             }
         }
