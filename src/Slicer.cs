@@ -40,14 +40,14 @@ namespace Slicer {
                     var bc = CheckVertices(facet.GetVertices()[2], facet.GetVertices()[3], layerZ);
                     var ca = CheckVertices(facet.GetVertices()[3], facet.GetVertices()[1], layerZ);
 
-                    var pointA = new Model3D.Vertex();
-                    var pointB = new Model3D.Vertex();
+                    var pointA = new Model3D.Vector3D();
+                    var pointB = new Model3D.Vector3D();
                     
                 }
             }
         }
 
-        private bool CheckVertices(Model3D.Vertex a, Model3D.Vertex b, float height) {
+        private bool CheckVertices(Model3D.Vector3D a, Model3D.Vector3D b, float height) {
             return a.GetZ() > height && b.GetZ() < height || a.GetZ() < height && b.GetZ() > height;
         } 
     }

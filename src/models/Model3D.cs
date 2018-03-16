@@ -25,13 +25,13 @@ namespace Slicer.models {
         }
 
         public class Facet {
-            private Vertex[] Vertices { get; }
+            private Vector3D[] Vertices { get; }
 
-            public Facet(Vertex[] vertices) {
+            public Facet(Vector3D[] vertices) {
                 Vertices = vertices;
             }
 
-            public Vertex[] GetVertices() {
+            public Vector3D[] GetVertices() {
                 return Vertices;
             }
 
@@ -45,12 +45,12 @@ namespace Slicer.models {
             }
         }
         
-        public class Vertex {
+        public class Vector3D {
             private float X { get; }
             private float Y { get; }
             private float Z { get; }
 
-            public Vertex(float x = 0, float y = 0, float z = 0) {
+            public Vector3D(float x = 0, float y = 0, float z = 0) {
                 X = x;
                 Y = y;
                 Z = z;

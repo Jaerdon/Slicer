@@ -26,19 +26,19 @@ namespace Slicer.formats {
                 for (var i = 0; i < triangles; i++) {
                     
                     //Facet Normal
-                    var normal = new Model3D.Vertex(BitConverter.ToSingle(bytes, cur), 
+                    var normal = new Model3D.Vector3D(BitConverter.ToSingle(bytes, cur), 
                                                     BitConverter.ToSingle(bytes, cur + 4), 
                                                     BitConverter.ToSingle(bytes, cur + 8)); 
                     //Vertex 1
-                    var v1 = new Model3D.Vertex(BitConverter.ToSingle(bytes, cur + 12), 
+                    var v1 = new Model3D.Vector3D(BitConverter.ToSingle(bytes, cur + 12), 
                                                 BitConverter.ToSingle(bytes, cur + 16), 
                                                 BitConverter.ToSingle(bytes, cur + 20));
                     //Vertex 2
-                    var v2 = new Model3D.Vertex(BitConverter.ToSingle(bytes, cur + 24), 
+                    var v2 = new Model3D.Vector3D(BitConverter.ToSingle(bytes, cur + 24), 
                                                 BitConverter.ToSingle(bytes, cur + 28), 
                                                 BitConverter.ToSingle(bytes, cur + 32));
                     //Vertex 3
-                    var v3 = new Model3D.Vertex(BitConverter.ToSingle(bytes, cur + 36), 
+                    var v3 = new Model3D.Vector3D(BitConverter.ToSingle(bytes, cur + 36), 
                                                 BitConverter.ToSingle(bytes, cur + 40), 
                                                 BitConverter.ToSingle(bytes, cur + 44));
                     
