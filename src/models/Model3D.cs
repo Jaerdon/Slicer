@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Slicer.formats;
+using Slicer.Formats;
 
 namespace Slicer.models
 {

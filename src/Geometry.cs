@@ -172,6 +172,11 @@ namespace Slicer
             Y = y;
         }
 
+        public string ToPair()
+        {
+            return string.Format("{0},{1}", X.ToString("0.0000"), Y.ToString("0.0000"));
+        }
+        
         public override string ToString()
         {
             return string.Format("X{0} Y{1}", X.ToString("0.0000"), Y.ToString("0.0000"));

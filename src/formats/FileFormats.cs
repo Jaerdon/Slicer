@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.IO;
 using System.Text;
 using Slicer.models;
 
-namespace Slicer.formats
+namespace Slicer.Formats
 {
     public class StlFile
     {
