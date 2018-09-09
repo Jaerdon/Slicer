@@ -1,9 +1,26 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
+using Slicer.Geometry;
 
 namespace Slicer.Formats
 {
+    public enum ExportFormat
+    {
+        GCode = 0,
+        SVG = 1
+    }
+    
+    public class GcodeFile
+    {
+        private const char ToolPrefix = 'T';
+        private const string SetTempCode = "M104 S";
+        private const string SetTempWaitCode = "M109 S";
+        private const string AbsoluteCode = "M82";
+        private const string HomeAxesCode = "G28";
+    }
+    
     public class SvgFile
     {
         private const string XmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
@@ -29,7 +46,7 @@ namespace Slicer.Formats
                 string lineString = LineHeader;
                 foreach (var line in polyline.Sides)
                 {
-                    lineString += line.P.ToPair();
+                    lineString += line.P.ToPair() + " ";
                 }
                 lineString += polyline.Sides[polyline.Sides.Length - 1].P.ToPair(); 
                 lines.Add(lineString + LineFooter);
@@ -40,8 +57,4 @@ namespace Slicer.Formats
         }
     }
 
-    public class GcodeFile
-    {
-        
-    }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using Slicer.Formats;
+using Slicer.Geometry;
 
 namespace Slicer.models
 {
