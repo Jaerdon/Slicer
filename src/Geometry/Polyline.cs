@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace Slicer.Geometry
 {
-    public class Polygon
+    public class Polyline
     {
         public readonly Segment[] Sides;
         private float area;
         private Point2D centroid;
 
-        public Polygon(Segment[] sides)
+        public Polyline(Segment[] sides)
         {
             Sides = sides;
         }
@@ -66,9 +66,9 @@ namespace Slicer.Geometry
             return new Point2D(x, y);
         }
 
-        public static Polygon operator +(Polygon a, Polygon b)
+        public static Polyline operator +(Polyline a, Polyline b)
         {
-            return new Polygon(new List<Segment>(a.Sides).Concat(b.Sides).ToArray());
+            return new Polyline(new List<Segment>(a.Sides).Concat(b.Sides).ToArray());
         }
     }
 }

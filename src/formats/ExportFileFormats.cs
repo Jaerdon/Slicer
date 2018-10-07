@@ -36,13 +36,13 @@ namespace Slicer.Formats
         private const string LineHeader = "<polyline points=\"";
         private const string LineFooter = "\" stroke=\"red\" stroke-width=\"1\" fill=\"none\"/>";
 
-        private readonly List<Polygon> _polylines;
+        private readonly List<Polyline> _polylines;
 
         /// <summary>
         ///     SVG File Format
         /// </summary>
-        /// <param name="polylines">Polygon List</param>
-        public SvgFile(List<Polygon> polylines)
+        /// <param name="polylines">Polyline List</param>
+        public SvgFile(List<Polyline> polylines)
         {
             _polylines = polylines;
         }
@@ -56,7 +56,7 @@ namespace Slicer.Formats
             List<string> lines = new List<string>();
             lines.Add(XmlHeader);
             lines.Add(SvgHeader);
-            foreach (Polygon polyline in _polylines)
+            foreach (Polyline polyline in _polylines)
             {
                 string lineString = LineHeader;
                 foreach (Segment line in polyline.Sides) lineString += line.P.ToPair() + " ";

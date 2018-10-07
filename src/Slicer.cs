@@ -78,14 +78,14 @@ namespace Slicer
                         lines.Add(new Segment(points[0], points[1], facet.GetVertices()[0].To2DPoint()));
                 }
 
-                //Polygon Creation v2
-                List<Polygon> layerPolygons = new List<Polygon>();
-                List<Segment> currentPolygon = new List<Segment>();
+                //Polyline Creation v2
+                List<Polyline> layerPolylines = new List<Polyline>();
+                List<Segment> currentPolyline = new List<Segment>();
                 if (lines.Count > 0)
                 {
                     Segment currentSegment = lines[0];
                     lines.Remove(currentSegment);
-                    currentPolygon.Add(currentSegment);
+                    currentPolyline.Add(currentSegment);
 
                     while (lines.Count > 0)
                         foreach (Segment segment in lines)
@@ -93,7 +93,7 @@ namespace Slicer
                             if (segment.P.Equals(currentSegment.Q))
                             {
                                 lines.Remove(segment);
-                                currentPolygon.Add(segment);
+                                currentPolyline.Add(segment);
                                 currentSegment = segment;
                                 break;
                             }
@@ -102,67 +102,66 @@ namespace Slicer
                             {
                                 lines.Remove(segment);
                                 segment.Swap();
-                                currentPolygon.Add(segment);
+                                currentPolyline.Add(segment);
                                 currentSegment = segment;
                                 break;
                             }
 
-                            if (!segment.Equals(lines.Last()) || currentPolygon.Count <= 0) continue;
+                            if (!segment.Equals(lines.Last()) || currentPolyline.Count <= 0) continue;
                             foreach (Segment line in lines)
                             {
-                                if (line.Q.Equals(currentPolygon[0].P) || line.P.Equals(currentPolygon[0].P))
+                                if (line.Q.Equals(currentPolyline[0].P) || line.P.Equals(currentPolyline[0].P))
                                 {
-                                    currentSegment = currentPolygon[0];
-                                    currentPolygon.Reverse();
-                                    foreach (Segment seg in currentPolygon) seg.Swap();
+                                    currentSegment = currentPolyline[0];
+                                    currentPolyline.Reverse();
+                                    foreach (Segment seg in currentPolyline) seg.Swap();
 
                                     break;
                                 }
 
                                 if (!line.Equals(lines.Last())) continue;
-                                if (!currentPolygon[0].Equals(currentPolygon.Last()))
-                                    currentPolygon.Add(new Segment(currentPolygon.Last().Q, currentPolygon[0].P));
+                                if (!currentPolyline[0].Equals(currentPolyline.Last()))
+                                    currentPolyline.Add(new Segment(currentPolyline.Last().Q, currentPolyline[0].P));
 
-                                layerPolygons.Add(new Polygon(currentPolygon.ToArray()));
-                                currentPolygon.Clear();
+                                layerPolylines.Add(new Polyline(currentPolyline.ToArray()));
+                                currentPolyline.Clear();
                                 currentSegment = lines[0];
                                 lines.Remove(currentSegment);
-                                currentPolygon.Add(currentSegment);
+                                currentPolyline.Add(currentSegment);
                                 break;
                             }
 
                             break;
                         }
 
-                    if (!currentPolygon[0].Equals(currentPolygon.Last()))
-                        currentPolygon.Add(new Segment(currentPolygon.Last().Q, currentPolygon[0].P));
+                    if (!currentPolyline[0].Equals(currentPolyline.Last()))
+                        currentPolyline.Add(new Segment(currentPolyline.Last().Q, currentPolyline[0].P));
 
-                    layerPolygons.Add(new Polygon(currentPolygon.ToArray()));
+                    layerPolylines.Add(new Polyline(currentPolyline.ToArray()));
                 }
 
                 switch (format)
                 {
                     case ExportFormat.GCode:
                     {
-                        //Enumerate over each polygon in the layer
-                        foreach (Polygon polygon in layerPolygons)
+                        //Enumerate over each polyline in the layer
+                        foreach (Polyline polyline in layerPolylines)
                         {
-                            toFile.Add("; Polygon");
+                            toFile.Add("; Polyline");
                             //Outer Walls
                             toFile.Add("; Walls");
-                            //toFile.Add(string.Format("G0 {0} Z{1}", polygon.Centroid, layerZ));
-                            toFile.Add($"G0 {polygon.Sides[0].P}");
-                            foreach (Segment line in polygon.Sides)
+                            toFile.Add($"G0 {polyline.Sides[0].P}");
+                            foreach (Segment line in polyline.Sides)
                                 toFile.Add($"G1 {line.Q} E{line.GetLength()}");
 
                             //Infill
                             //X-Axis Infill (Technically infill lines are Y-Axis)
                             toFile.Add("; Infill Across Y");
                             for (float x = minX; x < maxX; x += infillDiff)
-                                foreach (Segment segA in polygon.Sides)
+                                foreach (Segment segA in polyline.Sides)
                                 {
                                     if (!segA.IntersectsX(x)) continue;
-                                    foreach (Segment segB in polygon.Sides)
+                                    foreach (Segment segB in polyline.Sides)
                                     {
                                         if (segB.Equals(segA) || !segB.IntersectsX(x)) continue;
                                         Point2D ptA = segA.FindYIntersect(x);
@@ -176,10 +175,10 @@ namespace Slicer
                             //Y-Axis Infill (Technically infill lines are X-Axis)
                             toFile.Add("; Infill Across X");
                             for (float y = minY; y < maxY; y += infillDiff)
-                                foreach (Segment segA in polygon.Sides)
+                                foreach (Segment segA in polyline.Sides)
                                 {
                                     if (!segA.IntersectsY(y)) continue;
-                                    foreach (Segment segB in polygon.Sides)
+                                    foreach (Segment segB in polyline.Sides)
                                     {
                                         if (segB.Equals(segA) || !segB.IntersectsY(y)) continue;
                                         Point2D ptA = segA.FindXIntersect(y);
@@ -196,7 +195,7 @@ namespace Slicer
                     case ExportFormat.SVG:
                     {
                         if (!Directory.Exists(model.GetName())) Directory.CreateDirectory(model.GetName());
-                        SvgFile layerFile = new SvgFile(layerPolygons);
+                        SvgFile layerFile = new SvgFile(layerPolylines);
                         layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + layer));
                         break;
                     }
@@ -209,12 +208,12 @@ namespace Slicer
             if (format == ExportFormat.GCode) File.WriteAllLines(model.GetName() + ".gcode", toFile);
         }
 
-        private static Point2D GetIntersect(Point3D a, Point3D b, float z)
+        private static Point2D GetIntersect(Point3D pointA, Point3D pointB, float z)
         {
-            float t = (z - b.Z) / (a.Z - b.Z); //Scalar variable 't'
+            float t = (z - pointB.Z) / (pointA.Z - pointB.Z); //Scalar variable 't'
 
-            float x = b.X + t * (a.X - b.X); //Point of X intersection
-            float y = b.Y + t * (a.Y - b.Y); //Point of Y intersection
+            float x = pointB.X + t * (pointA.X - pointB.X);   //Point of X intersection
+            float y = pointB.Y + t * (pointA.Y - pointB.Y);   //Point of Y intersection
 
             return new Point2D(x, y);
         }
