@@ -26,20 +26,12 @@ namespace Slicer.Geometry
 
         public Point2D Centroid
         {
-            get
-            {
-                if (centroid == null)
-                {
-                    centroid = CalculateCentroid();
-                }
-
-                return centroid;
-            }
+            get { return centroid ?? (centroid = CalculateCentroid()); }
         }
 
-        public readonly Line[] Sides;
+        public readonly Segment[] Sides;
 
-        public Polygon(Line[] sides)
+        public Polygon(Segment[] sides)
         {
             Sides = sides;
         }
@@ -80,10 +72,15 @@ namespace Slicer.Geometry
 
             return new Point2D(x, y);
         }
-        
+
         public static Polygon operator +(Polygon a, Polygon b)
         {
-            return new Polygon((new List<Line>(a.Sides)).Concat(b.Sides).ToArray());
+            return new Polygon((new List<Segment>(a.Sides)).Concat(b.Sides).ToArray());
+        }
+
+        public void Reverse()
+        {
+            Sides.Reverse();
         }
     }
 }

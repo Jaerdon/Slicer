@@ -12,14 +12,14 @@ namespace Slicer
             var slicer = new Slicer();
             Console.WriteLine("/  ___| (_)\n" +
                               "\\ `--.| |_  ___ ___ _ __ \n" +
-                              "`--. \\ | |/ __/ _ \\ '__|\n" +
+                              " `--. \\ | |/ __/ _ \\ '__|\n" +
                               "/\\__/ / | | (_|  __/ |\n" +
                               "\\____/|_|_|\\___\\___|_|   ");
             if (args.Length > 0)
             {
                 var file = args[0]; 
                 Model3D model = Model3D.CreateFromStl(file);
-                slicer.SliceByLayer(model, 1.5f, 5, ExportFormat.GCode);
+                slicer.SliceByLayer(model, 0.2f, 0.15f, ExportFormat.GCode);
                 Console.WriteLine("Done slicing " + Path.GetFileName(file));
             }
         }

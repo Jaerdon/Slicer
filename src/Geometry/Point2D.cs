@@ -30,7 +30,7 @@ namespace Slicer.Geometry
         {
             if (obj != null && obj.GetType() == typeof(Point2D))
             {
-                var foo = Math.Abs(((Point2D) obj).X - X) < 0.001 && Math.Abs(((Point2D) obj).Y - Y) < 0.001;
+                var foo = Math.Abs(((Point2D) obj).X - X) < 0.00001 && Math.Abs(((Point2D) obj).Y - Y) < 0.00001;
                 //if (foo) Console.WriteLine(this.ToPair() + " compares to " + obj.ToString() + ": " + foo);
                 return foo;
             }
