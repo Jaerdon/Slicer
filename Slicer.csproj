@@ -43,7 +43,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Formats\ExportFileFormats.cs" />
     <Compile Include="src\Formats\FileFormats.cs" />
-    <Compile Include="src\Geometry\Line.cs" />
+    <Compile Include="src\Geometry\Segment.cs" />
     <Compile Include="src\Geometry\Point2D.cs" />
     <Compile Include="src\Geometry\Polygon.cs" />
     <Compile Include="src\Models\Model3D.cs" />

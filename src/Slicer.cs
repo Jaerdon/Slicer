@@ -1,19 +1,20 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using Slicer.Formats;
 using Slicer.Geometry;
 using Slicer.models;
 
 namespace Slicer
 {
+    /// <summary>
+    ///     Slicer
+    /// </summary>
     public class Slicer
     {
         /// <summary>
-        /// Slices model
+        ///     Slices model
         /// </summary>
         /// <param name="model">Model to be sliced.</param>
         /// <param name="layerHeight">Height of each layer in mm.</param>
@@ -32,7 +33,6 @@ namespace Slicer
 
             //Calculate max height of model
             foreach (Model3D.Facet facet in model.getFacets())
-            {
                 for (int i = 1; i < 4; i++)
                 {
                     float x = facet.GetVertices()[i].X;
@@ -47,7 +47,6 @@ namespace Slicer
                     if (z > height) height = z;
                     if (z < floor) floor = z;
                 }
-            }
 
             float infillDiff = 10 * infillPercent;
 
@@ -59,7 +58,7 @@ namespace Slicer
                 float layerZ = layerHeight * layer + floor;
                 List<Segment> lines = new List<Segment>();
 
-                toFile.Add(string.Format("G0 Z{0}; Layer {1}", layerZ, layer));
+                toFile.Add($"G0 Z{layerZ}; Layer {layer}");
 
                 foreach (Model3D.Facet facet in model.getFacets())
                 {
@@ -70,19 +69,13 @@ namespace Slicer
                     {
                         int b = a == 3 ? 1 : a + 1;
                         if (CheckVertices(facet.GetVertices()[a], facet.GetVertices()[b], layerZ))
-                        {
                             points.Add(GetIntersect(facet.GetVertices()[a], facet.GetVertices()[b], layerZ));
-                        }
                         else if (CheckVertices(facet.GetVertices()[b], facet.GetVertices()[a], layerZ))
-                        {
                             points.Add(GetIntersect(facet.GetVertices()[b], facet.GetVertices()[a], layerZ));
-                        }
                     }
 
                     if (points.Count > 1)
-                    {
                         lines.Add(new Segment(points[0], points[1], facet.GetVertices()[0].To2DPoint()));
-                    }
                 }
 
                 //Polygon Creation v2
@@ -95,7 +88,6 @@ namespace Slicer
                     currentPolygon.Add(currentSegment);
 
                     while (lines.Count > 0)
-                    {
                         foreach (Segment segment in lines)
                         {
                             if (segment.P.Equals(currentSegment.Q))
@@ -122,19 +114,14 @@ namespace Slicer
                                 {
                                     currentSegment = currentPolygon[0];
                                     currentPolygon.Reverse();
-                                    foreach (Segment seg in currentPolygon)
-                                    {
-                                        seg.Swap();
-                                    }
+                                    foreach (Segment seg in currentPolygon) seg.Swap();
 
                                     break;
                                 }
 
                                 if (!line.Equals(lines.Last())) continue;
                                 if (!currentPolygon[0].Equals(currentPolygon.Last()))
-                                {
                                     currentPolygon.Add(new Segment(currentPolygon.Last().Q, currentPolygon[0].P));
-                                }
 
                                 layerPolygons.Add(new Polygon(currentPolygon.ToArray()));
                                 currentPolygon.Clear();
@@ -146,12 +133,9 @@ namespace Slicer
 
                             break;
                         }
-                    }
 
                     if (!currentPolygon[0].Equals(currentPolygon.Last()))
-                    {
                         currentPolygon.Add(new Segment(currentPolygon.Last().Q, currentPolygon[0].P));
-                    }
 
                     layerPolygons.Add(new Polygon(currentPolygon.ToArray()));
                 }
@@ -167,16 +151,14 @@ namespace Slicer
                             //Outer Walls
                             toFile.Add("; Walls");
                             //toFile.Add(string.Format("G0 {0} Z{1}", polygon.Centroid, layerZ));
-                            toFile.Add(string.Format("G0 {0}", polygon.Sides[0].P));
-                            foreach (Segment line in polygon.Sides) {
-                                toFile.Add(string.Format("G1 {0} E{1}", line.Q, line.GetLength()));
-                            }
+                            toFile.Add($"G0 {polygon.Sides[0].P}");
+                            foreach (Segment line in polygon.Sides)
+                                toFile.Add($"G1 {line.Q} E{line.GetLength()}");
 
                             //Infill
                             //X-Axis Infill (Technically infill lines are Y-Axis)
                             toFile.Add("; Infill Across Y");
                             for (float x = minX; x < maxX; x += infillDiff)
-                            {
                                 foreach (Segment segA in polygon.Sides)
                                 {
                                     if (!segA.IntersectsX(x)) continue;
@@ -185,17 +167,15 @@ namespace Slicer
                                         if (segB.Equals(segA) || !segB.IntersectsX(x)) continue;
                                         Point2D ptA = segA.FindYIntersect(x);
                                         Point2D ptB = segB.FindYIntersect(x);
-                                        var line = new Segment(ptA, ptB);
-                                        toFile.Add(string.Format("G0 {0}", ptA));
-                                        toFile.Add(string.Format("G1 {0} E{1}", ptB, line.GetLength()));
+                                        Segment line = new Segment(ptA, ptB);
+                                        toFile.Add($"G0 {ptA}");
+                                        toFile.Add($"G1 {ptB} E{line.GetLength()}");
                                     }
                                 }
-                            }
 
                             //Y-Axis Infill (Technically infill lines are X-Axis)
                             toFile.Add("; Infill Across X");
                             for (float y = minY; y < maxY; y += infillDiff)
-                            {
                                 foreach (Segment segA in polygon.Sides)
                                 {
                                     if (!segA.IntersectsY(y)) continue;
@@ -204,12 +184,11 @@ namespace Slicer
                                         if (segB.Equals(segA) || !segB.IntersectsY(y)) continue;
                                         Point2D ptA = segA.FindXIntersect(y);
                                         Point2D ptB = segB.FindXIntersect(y);
-                                        var line = new Segment(ptA, ptB);
-                                        toFile.Add(string.Format("G0 {0}", ptA));
-                                        toFile.Add(string.Format("G1 {0} E{1}", ptB, line.GetLength()));
+                                        Segment line = new Segment(ptA, ptB);
+                                        toFile.Add($"G0 {ptA}");
+                                        toFile.Add($"G1 {ptB} E{line.GetLength()}");
                                     }
                                 }
-                            }
                         }
 
                         break;
@@ -217,7 +196,7 @@ namespace Slicer
                     case ExportFormat.SVG:
                     {
                         if (!Directory.Exists(model.GetName())) Directory.CreateDirectory(model.GetName());
-                        var layerFile = new SvgFile(layerPolygons);
+                        SvgFile layerFile = new SvgFile(layerPolygons);
                         layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + layer));
                         break;
                     }
@@ -227,10 +206,7 @@ namespace Slicer
                 }
             }
 
-            if (format == ExportFormat.GCode)
-            {
-                File.WriteAllLines(model.GetName() + ".gcode", toFile);
-            }
+            if (format == ExportFormat.GCode) File.WriteAllLines(model.GetName() + ".gcode", toFile);
         }
 
         private static Point2D GetIntersect(Point3D a, Point3D b, float z)

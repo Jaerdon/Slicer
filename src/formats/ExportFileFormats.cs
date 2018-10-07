@@ -1,17 +1,21 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Runtime.CompilerServices;
 using Slicer.Geometry;
 
 namespace Slicer.Formats
 {
+    /// <summary>
+    ///     File Format Type
+    /// </summary>
     public enum ExportFormat
     {
         GCode = 0,
         SVG = 1
     }
-    
+
+    /// <summary>
+    ///     GCode File Format
+    /// </summary>
     public class GcodeFile
     {
         private const char ToolPrefix = 'T';
@@ -20,7 +24,10 @@ namespace Slicer.Formats
         private const string AbsoluteCode = "M82";
         private const string HomeAxesCode = "G28";
     }
-    
+
+    /// <summary>
+    ///     SVG File Format
+    /// </summary>
     public class SvgFile
     {
         private const string XmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
@@ -29,32 +36,37 @@ namespace Slicer.Formats
         private const string LineHeader = "<polyline points=\"";
         private const string LineFooter = "\" stroke=\"red\" stroke-width=\"1\" fill=\"none\"/>";
 
-        private List<Polygon> polylines;
+        private readonly List<Polygon> _polylines;
 
+        /// <summary>
+        ///     SVG File Format
+        /// </summary>
+        /// <param name="polylines">Polygon List</param>
         public SvgFile(List<Polygon> polylines)
         {
-            this.polylines = polylines;
+            _polylines = polylines;
         }
 
+        /// <summary>
+        ///     Write slices to a .svg file
+        /// </summary>
+        /// <param name="filePath"></param>
         public void WriteToFile(string filePath)
         {
             List<string> lines = new List<string>();
             lines.Add(XmlHeader);
             lines.Add(SvgHeader);
-            foreach (Polygon polyline in polylines)
+            foreach (Polygon polyline in _polylines)
             {
                 string lineString = LineHeader;
-                foreach (var line in polyline.Sides)
-                {
-                    lineString += line.P.ToPair() + " ";
-                }
-                lineString += polyline.Sides[polyline.Sides.Length - 1].P.ToPair(); 
+                foreach (Segment line in polyline.Sides) lineString += line.P.ToPair() + " ";
+                lineString += polyline.Sides[polyline.Sides.Length - 1].P.ToPair();
                 lines.Add(lineString + LineFooter);
             }
+
             lines.Add(SvgFooter);
 
             File.WriteAllLines(filePath, lines);
         }
     }
-
 }

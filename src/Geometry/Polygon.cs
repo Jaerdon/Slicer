@@ -5,36 +5,29 @@ namespace Slicer.Geometry
 {
     public class Polygon
     {
-        private float area = 0.0f;
-        private Point2D centroid = null;
-
-        /// <summary>
-        /// Area of a given polygon
-        /// </summary>
-        public float Area
-        {
-            get
-            {
-                if (area == 0.0f)
-                {
-                    area = CalculateArea();
-                }
-
-                return area;
-            }
-        }
-
-        public Point2D Centroid
-        {
-            get { return centroid ?? (centroid = CalculateCentroid()); }
-        }
-
         public readonly Segment[] Sides;
+        private float area;
+        private Point2D centroid;
 
         public Polygon(Segment[] sides)
         {
             Sides = sides;
         }
+
+        /// <summary>
+        ///     Area of a given polygon
+        /// </summary>
+        private float Area
+        {
+            get
+            {
+                if (area == 0.0f) area = CalculateArea();
+
+                return area;
+            }
+        }
+
+        public Point2D Centroid => centroid ?? (centroid = CalculateCentroid());
 
         private float CalculateArea()
         {
@@ -53,8 +46,8 @@ namespace Slicer.Geometry
         //TODO: Loop over a collection of points instead of each side
         private Point2D CalculateCentroid()
         {
-            float x = 0f;
-            float y = 0f;
+            float x = 0.0f;
+            float y = 0.0f;
 
             for (int i = 0; i < Sides.Length - 1; i++)
             {
@@ -67,20 +60,15 @@ namespace Slicer.Geometry
                      (Sides[i].Q.X * Sides[i + 1].P.Y - Sides[i + 1].P.X * Sides[i].Q.Y);
             }
 
-            x /= (6 * Area);
-            y /= (6 * Area);
+            x /= 6 * Area;
+            y /= 6 * Area;
 
             return new Point2D(x, y);
         }
 
         public static Polygon operator +(Polygon a, Polygon b)
         {
-            return new Polygon((new List<Segment>(a.Sides)).Concat(b.Sides).ToArray());
-        }
-
-        public void Reverse()
-        {
-            Sides.Reverse();
+            return new Polygon(new List<Segment>(a.Sides).Concat(b.Sides).ToArray());
         }
     }
 }
