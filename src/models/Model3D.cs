@@ -42,10 +42,30 @@ namespace Slicer.models
         {
             return Facets;
         }
+        
 
         public string GetName()
         {
             return Name;
+        }
+
+        public void Rotate(float x, float y, float z)
+        {
+            if (x == 0.0f && y == 0.0f && z == 0.0f) return;
+        }
+
+        public void Translate(float x, float y, float z)
+        {
+            if (x == 0.0f && y == 0.0f && z == 0.0f) return;
+            foreach (Facet facet in Facets)
+            {
+                foreach (Point3D vertex in facet.GetVertices())
+                {
+                    vertex.X += x;
+                    vertex.Y += y;
+                    vertex.Z += z;
+                }
+            }
         }
 
         /// <summary>
@@ -80,9 +100,9 @@ namespace Slicer.models
     /// </summary>
     public class Point3D
     {
-        public readonly float X;
-        public readonly float Y;
-        public readonly float Z;
+        public float X;
+        public float Y;
+        public float Z;
 
         /// <summary>
         ///     Returns a 3D point from given X, Y, and Z values.
