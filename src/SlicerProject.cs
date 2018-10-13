@@ -102,7 +102,7 @@ namespace Slicer
 
         private static void DisplayHelpMessage()
         {
-            Console.WriteLine("Usage: slice [OPTION]... [FILE]...\n" +
+            Console.WriteLine($"Usage: {Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location)} [OPTION]... [FILE]...\n" +
                               "Slices CAD FILE into an EXPORT FILE.\n\n" +
                               "-tX [n], --translateX [n]      translate x component by some amount n\n" +
                               "-tY [n], --translateY [n]      translate y component by some amount n\n" +
@@ -121,7 +121,7 @@ namespace Slicer
 
         private static void DisplayErrorMessage()
         {
-            Console.WriteLine("Improper arguments.\nTry 'slice --help' for more information.");
+            Console.WriteLine($"Improper arguments.\nTry '{Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location)} --help' for more information.");
         }
     }
 }
