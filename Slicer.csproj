@@ -45,7 +45,7 @@
     <Compile Include="src\Formats\FileFormats.cs" />
     <Compile Include="src\Geometry\Segment.cs" />
     <Compile Include="src\Geometry\Point2D.cs" />
-    <Compile Include="src\Geometry\Polygon.cs" />
+    <Compile Include="src\Geometry\Polyline.cs" />
     <Compile Include="src\Models\Model3D.cs" />
     <Compile Include="src\Slicer.cs" />
     <Compile Include="src\SlicerProject.cs" />
