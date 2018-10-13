@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Slicer.Formats;
 using Slicer.models;
 
@@ -28,6 +29,8 @@ namespace Slicer
 
                 float layerHeight = 0.2f;
                 float infill = 0.15f;
+                float temp = 0.0f;
+                float bed = 0.0f;
 
                 ExportFormat format = ExportFormat.GCode;
 
@@ -53,10 +56,14 @@ namespace Slicer
                             rotateY = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-rZ") || args[i].Equals("--rotateZ"))
                             rotateZ = float.Parse(args[i + 1]);
-                        else if (args[i].Equals("-l") || args[i].Equals("--layerHeight"))
+                        else if (args[i].Equals("-l") || args[i].Equals("--layerheight"))
                             layerHeight = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-i") || args[i].Equals("--infill"))
                             infill = float.Parse(args[i + 1]);
+                        else if (args[i].Equals("-t") || args[i].Equals("--temp"))
+                            temp = float.Parse(args[i + 1]);
+                        else if (args[i].Equals("-b") || args[i].Equals("--bed"))
+                            bed = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-e") || args[i].Equals("--export"))
                         {
                             if (args[i + 1].ToLower().Equals("gcode")) 
@@ -86,7 +93,7 @@ namespace Slicer
                     model.Translate(translateX, translateY, translateZ);
                     model.Rotate(rotateX, rotateY, rotateZ);
                 }
-                slicer.SliceByLayer(model, layerHeight, infill, format);
+                slicer.SliceByLayer(model, layerHeight, infill, format , temp, bed);
                 Console.WriteLine("Done slicing " + Path.GetFileName(file));
             }
 
@@ -96,7 +103,7 @@ namespace Slicer
         private static void DisplayHelpMessage()
         {
             Console.WriteLine("Usage: slice [OPTION]... [FILE]...\n" +
-                              "Slices CAD FILE into GCODE FILE.\n\n" +
+                              "Slices CAD FILE into an EXPORT FILE.\n\n" +
                               "-tX [n], --translateX [n]      translate x component by some amount n\n" +
                               "-tY [n], --translateY [n]      translate y component by some amount n\n" +
                               "-tZ [n], --translateZ [n]      translate z component by some amount n\n" +
@@ -104,9 +111,11 @@ namespace Slicer
                               "-rY [n], --rotateY [n]         rotate model around y axis by some amount n\n" +
                               "-rZ [n], --rotateZ [n]         rotate model around z axis by some amount n\n" +
                             "\n-s, --swap                       swap rotation and transformation order, default is transform first\n" +
-                              "-l [n], --layerHeight [n]        set layerheight to n, default is 0.2mm\n" +
+                              "-l [n], --layerheight [n]        set layer height to n, default is 0.2mm\n" +
+                              "-t [n], --temp [n]               set hot-end temp to n (Celsius), default is 200C\n" +
+                              "-b [n], --bed [n]                set bed temp to n (Celsius), default is 0C\n" +
                               "-i [n], --infill [n]             set infill percentage to n, default is 15% (0.15)\n" +
-                              "-f [format], --format [format]   change export format type (ex. GCode, SVG)\n" +
+                              "-f [format], --format [format]   change export format type, default is GCode (ex. GCode, SVG)\n" +
                               "\n-h, --help display this help\n");
         }
 

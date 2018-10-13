@@ -20,7 +20,9 @@ namespace Slicer
         /// <param name="layerHeight">Height of each layer in mm.</param>
         /// <param name="infillPercent">Decimal percent of space between infill lines.</param>
         /// <param name="format">File format for the export</param>
-        public void SliceByLayer(Model3D model, float layerHeight, float infillPercent, ExportFormat format)
+        /// <param name="hotEndTemp">Temperature of the hot-end</param>
+        /// <param name="bedTemp">Temperature of the bed (if any)</param>
+        public void SliceByLayer(Model3D model, float layerHeight, float infillPercent, ExportFormat format, float hotEndTemp, float bedTemp)
         {
             List<string> toFile = new List<string>();
             float height = 0.0f;
@@ -51,6 +53,8 @@ namespace Slicer
             float infillDiff = 10 * infillPercent;
 
             long layerCount = (long) (height / layerHeight);
+
+            List<List<Polyline>> layers = new List<List<Polyline>>();
 
             //Slice individual layers
             for (int layer = 0; layer < layerCount; layer++)
@@ -139,13 +143,20 @@ namespace Slicer
 
                     layerPolylines.Add(new Polyline(currentPolyline.ToArray()));
                 }
-
-                switch (format)
+                layers.Add(layerPolylines);
+            }
+            
+            
+            //Export to file
+            switch (format)
+            {
+                case ExportFormat.GCode:
                 {
-                    case ExportFormat.GCode:
+                    toFile.Add(GcodeFile.AddHeader(0, hotEndTemp, bedTemp));
+                    foreach (List<Polyline> layer in layers)
                     {
                         //Enumerate over each polyline in the layer
-                        foreach (Polyline polyline in layerPolylines)
+                        foreach (Polyline polyline in layer)
                         {
                             toFile.Add("; Polyline");
                             //Outer Walls
@@ -189,31 +200,32 @@ namespace Slicer
                                     }
                                 }
                         }
-
-                        break;
                     }
-                    case ExportFormat.SVG:
-                    {
-                        if (!Directory.Exists(model.GetName())) Directory.CreateDirectory(model.GetName());
-                        SvgFile layerFile = new SvgFile(layerPolylines);
-                        layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + layer));
-                        break;
-                    }
-
-                    default:
-                        throw new ArgumentOutOfRangeException(null, format, null);
+                    File.WriteAllLines($"{model.GetName()}.gcode", toFile);
+                    break;
                 }
-            }
+                case ExportFormat.SVG:
+                {
+                    if (!Directory.Exists(model.GetName())) Directory.CreateDirectory(model.GetName());
+                    foreach (List<Polyline> layer in layers)
+                    {
+                        SvgFile layerFile = new SvgFile(layer);
+                        layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + layer));
+                    }
 
-            if (format == ExportFormat.GCode) File.WriteAllLines(model.GetName() + ".gcode", toFile);
+                    break;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException(null, format, null);
+            }
         }
 
         private static Point2D GetIntersect(Point3D pointA, Point3D pointB, float z)
         {
             float t = (z - pointB.Z) / (pointA.Z - pointB.Z); //Scalar variable 't'
 
-            float x = pointB.X + t * (pointA.X - pointB.X);   //Point of X intersection
-            float y = pointB.Y + t * (pointA.Y - pointB.Y);   //Point of Y intersection
+            float x = pointB.X + t * (pointA.X - pointB.X); //Point of X intersection
+            float y = pointB.Y + t * (pointA.Y - pointB.Y); //Point of Y intersection
 
             return new Point2D(x, y);
         }
