@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Slicer.Formats;
 using Slicer.Geometry;
@@ -52,6 +53,29 @@ namespace Slicer.models
         public void Rotate(float x, float y, float z)
         {
             if (x == 0.0f && y == 0.0f && z == 0.0f) return;
+            foreach (Facet facet in Facets)
+            {
+                foreach (Point3D vertex in facet.GetVertices())
+                {
+                    //Around X axis (YZ plane)
+                    float angleX = (float) (Math.Atan2(vertex.Y, vertex.Z) + z);
+                    float distX = (float) Math.Sqrt(Math.Pow(vertex.Y, 2) + Math.Pow(vertex.Z, 2));
+                    vertex.Y += distX * (float) Math.Cos(angleX);
+                    vertex.Z += distX * (float) Math.Sin(angleX);
+                    
+                    //Around Y axis (XZ plane)
+                    float angleY = (float) (Math.Atan2(vertex.X, vertex.Z) + z);
+                    float distY = (float) Math.Sqrt(Math.Pow(vertex.X, 2) + Math.Pow(vertex.Z, 2));
+                    vertex.X += distY * (float) Math.Cos(angleY);
+                    vertex.Z += distY * (float) Math.Sin(angleY);
+                    
+                    //Around Z axis (XY plane)
+                    float angleZ = (float) (Math.Atan2(vertex.X, vertex.Y) + z);
+                    float distZ = (float) Math.Sqrt(Math.Pow(vertex.X, 2) + Math.Pow(vertex.Y, 2));
+                    vertex.X += distZ * (float) Math.Cos(angleZ);
+                    vertex.Y += distZ * (float) Math.Sin(angleZ);
+                }
+            }
         }
 
         public void Translate(float x, float y, float z)
