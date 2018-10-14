@@ -36,7 +36,7 @@ namespace Slicer.Formats
     public class SvgFile
     {
         private const string XmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        private const string SvgHeader = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">";
+        private const string SvgHeader = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"";
         private const string SvgFooter = "</svg>";
         private const string LineHeader = "<polyline points=\"";
         private const string LineFooter = "\" stroke=\"red\" stroke-width=\"1\" fill=\"none\"/>";
@@ -56,11 +56,11 @@ namespace Slicer.Formats
         ///     Write slices to a .svg file
         /// </summary>
         /// <param name="filePath"></param>
-        public void WriteToFile(string filePath)
+        public void WriteToFile(string filePath, string modifiers)
         {
             List<string> lines = new List<string>();
             lines.Add(XmlHeader);
-            lines.Add(SvgHeader);
+            lines.Add(SvgHeader + modifiers + ">");
             foreach (Polyline polyline in _polylines)
             {
                 string lineString = LineHeader;

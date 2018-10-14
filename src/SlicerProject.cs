@@ -64,7 +64,7 @@ namespace Slicer
                             temp = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-b") || args[i].Equals("--bed"))
                             bed = float.Parse(args[i + 1]);
-                        else if (args[i].Equals("-e") || args[i].Equals("--export"))
+                        else if (args[i].Equals("-f") || args[i].Equals("--format"))
                         {
                             if (args[i + 1].ToLower().Equals("gcode")) 
                                 format = ExportFormat.GCode;
@@ -94,7 +94,6 @@ namespace Slicer
                     model.Rotate(rotateX, rotateY, rotateZ);
                 }
                 slicer.SliceByLayer(model, layerHeight, infill, format , temp, bed);
-                Console.WriteLine("Done slicing " + Path.GetFileName(file));
             }
 
             else DisplayErrorMessage();

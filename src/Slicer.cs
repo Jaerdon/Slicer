@@ -146,6 +146,7 @@ namespace Slicer
                 layers.Add(layerPolylines);
             }
             
+            Console.WriteLine($"Done slicing {model.GetName()}");
             
             //Export to file
             switch (format)
@@ -202,16 +203,20 @@ namespace Slicer
                         }
                     }
                     File.WriteAllLines($"{model.GetName()}.gcode", toFile);
+                    Console.WriteLine($"Exported to {model.GetName()}.gcode");
                     break;
                 }
                 case ExportFormat.SVG:
                 {
                     if (!Directory.Exists(model.GetName())) Directory.CreateDirectory(model.GetName());
-                    foreach (List<Polyline> layer in layers)
+                    string modifiers = $" viewBox=\"{minX} {minY} {maxX - minX} {maxY - minY}\"";
+                    for (int i = 0; i < layers.Count; i++)
                     {
+                        List<Polyline> layer = layers[i];
                         SvgFile layerFile = new SvgFile(layer);
-                        layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + layer));
+                        layerFile.WriteToFile(Path.Combine(model.GetName(), model.GetName() + i + ".svg"), modifiers);
                     }
+                    Console.WriteLine($"Exported to /{model.GetName()}/");
 
                     break;
                 }

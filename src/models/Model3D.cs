@@ -30,7 +30,7 @@ namespace Slicer.models
         public static Model3D CreateFromStl(string path, string name = null)
         {
             StlFile stl = new StlFile(path);
-            if (name == null) name = Path.GetFileName(path);
+            if (name == null) name = Path.GetFileNameWithoutExtension(path);
             return new Model3D(name, stl.GetFacets());
         }
 
