@@ -13,6 +13,9 @@ namespace Slicer
     /// </summary>
     public class Slicer
     {
+        private const float FilamentArea = 0.765625f * (float) Math.PI;
+        private const float FilamentDensity = 1.25f;
+        
         /// <summary>
         ///     Slices model
         /// </summary>
@@ -53,6 +56,8 @@ namespace Slicer
             float infillDiff = 10 * infillPercent;
 
             long layerCount = (long) (height / layerHeight);
+
+            float filamentUsed = 0.0f;
 
             List<List<Polyline>> layers = new List<List<Polyline>>();
 
@@ -164,7 +169,10 @@ namespace Slicer
                             toFile.Add("; Walls");
                             toFile.Add($"G0 {polyline.Sides[0].P}");
                             foreach (Segment line in polyline.Sides)
+                            {
                                 toFile.Add($"G1 {line.Q} E{line.GetLength()}");
+                                filamentUsed += line.GetLength();
+                            }
 
                             //Infill
                             //X-Axis Infill (Technically infill lines are Y-Axis)
@@ -181,6 +189,7 @@ namespace Slicer
                                         Segment line = new Segment(ptA, ptB);
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G1 {ptB} E{line.GetLength()}");
+                                        filamentUsed += line.GetLength();
                                     }
                                 }
 
@@ -198,12 +207,17 @@ namespace Slicer
                                         Segment line = new Segment(ptA, ptB);
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G1 {ptB} E{line.GetLength()}");
+                                        filamentUsed += line.GetLength();
                                     }
                                 }
                         }
                     }
                     File.WriteAllLines($"{model.GetName()}.gcode", toFile);
                     Console.WriteLine($"Exported to {model.GetName()}.gcode");
+                    Console.WriteLine("Model Info:");
+                    filamentUsed /= 1000;
+                    Console.WriteLine($"  Filament length: {filamentUsed} meters");
+                    Console.WriteLine($"  Filament weight: {filamentUsed * FilamentArea * FilamentDensity} grams");
                     break;
                 }
                 case ExportFormat.SVG:
