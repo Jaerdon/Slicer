@@ -6,7 +6,7 @@ using Slicer.models;
 
 namespace Slicer
 {
-    public class SlicerProject
+    public static class SlicerProject
     {
         public static void Main(string[] args)
         {
@@ -28,9 +28,12 @@ namespace Slicer
                 float rotateZ = 0.0f;
 
                 float layerHeight = 0.2f;
-                float infill = 0.15f;
-                float temp = 0.0f;
-                float bed = 0.0f;
+                float infill = 0.25f;
+                float temp = 200.0f;
+                float bed = 60.0f;
+
+                float bedX = 200.0f;
+                float bedY = 200.0f;
 
                 ExportFormat format = ExportFormat.GCode;
 
@@ -64,6 +67,10 @@ namespace Slicer
                             temp = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-b") || args[i].Equals("--bed"))
                             bed = float.Parse(args[i + 1]);
+                        else if (args[i].Equals("-x") || args[i].Equals("--xLength"))
+                            bedX = float.Parse(args[i + 1]);
+                        else if (args[i].Equals("-y") || args[i].Equals("--yLength"))
+                            bedY = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-f") || args[i].Equals("--format"))
                         {
                             if (args[i + 1].ToLower().Equals("gcode")) 
@@ -93,7 +100,7 @@ namespace Slicer
                     model.Translate(translateX, translateY, translateZ);
                     model.Rotate(rotateX, rotateY, rotateZ);
                 }
-                slicer.SliceByLayer(model, layerHeight, infill, format , temp, bed);
+                slicer.SliceByLayer(model, layerHeight, infill - 0.1f, format , temp, bed, bedX, bedY);
             }
 
             else DisplayErrorMessage();
@@ -113,7 +120,9 @@ namespace Slicer
                               "-l [n], --layerheight [n]        set layer height to n, default is 0.2mm\n" +
                               "-t [n], --temp [n]               set hot-end temp to n (Celsius), default is 200C\n" +
                               "-b [n], --bed [n]                set bed temp to n (Celsius), default is 0C\n" +
-                              "-i [n], --infill [n]             set infill percentage to n, default is 15% (0.15)\n" +
+                              "-i [n], --infill [n]             set infill percentage to n, default is 15% (0.25)\n" +
+                              "-x [n], --xLength [n]            define bed x length as n, default is 200mm\n" +
+                              "-y [n], --yLength [n]            define bed y length as n, default is 200mm\n" +
                               "-f [format], --format [format]   change export format type, default is GCode (ex. GCode, SVG)\n" +
                               "\n-h, --help display this help\n");
         }

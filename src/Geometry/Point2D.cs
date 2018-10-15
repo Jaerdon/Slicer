@@ -7,8 +7,8 @@ namespace Slicer.Geometry
     /// </summary>
     public class Point2D
     {
-        public readonly float X;
-        public readonly float Y;
+        public float X;
+        public float Y;
 
         public Point2D(float x = 0, float y = 0)
         {

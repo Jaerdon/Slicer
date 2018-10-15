@@ -18,16 +18,6 @@ namespace Slicer.Formats
     /// </summary>
     public class GcodeFile
     {
-        private const char ToolPrefix = 'T';
-        private const string SetHotendTempCode = "M109 S";
-        private const string SetBedTempCode = "M190 S";
-        private const string AbsoluteCode = "M82";
-        private const string HomeAxesCode = "G28";
-
-        public static string AddHeader(int tool, float hotendTemp, float bedTemp)
-        {
-            return $"{ToolPrefix}{tool}\n{AbsoluteCode}\n{HomeAxesCode}\n{SetHotendTempCode}{hotendTemp}\n{SetBedTempCode}{bedTemp}\n\n";
-        }
     }
 
     /// <summary>
