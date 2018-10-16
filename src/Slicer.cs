@@ -14,9 +14,10 @@ namespace Slicer
     /// </summary>
     public class Slicer
     {
+        private const float NozzleWidth = 0.4f;
+        private const float FilamentDiameter = 1.75f;
         private const float FilamentArea = 0.765625f * (float) Math.PI;
         private const float FilamentDensity = 1.25f;
-        private const float FilamentMultiplier = 28.0f;
         private const float LineWidth = 0.4f;
         
         /// <summary>
@@ -32,6 +33,9 @@ namespace Slicer
         /// <param name="bedY"></param>
         public void SliceByLayer(Model3D model, float layerHeight, float infillPercent, ExportFormat format, float hotEndTemp, float bedTemp, float bedX, float bedY)
         {
+            float filamentMultiplier = (1.2f * layerHeight * NozzleWidth) / ((float)Math.PI * FilamentDiameter * FilamentDiameter);
+            float filamentOffset = NozzleWidth * (float) Math.PI;
+            
             List<string> toFile = new List<string>();
             float height = 0.0f;
             float floor = 0.0f;
@@ -190,7 +194,7 @@ namespace Slicer
                             foreach (Segment line in polyline.Sides)
                             {
                                 filamentUsed += line.GetLength();
-                                toFile.Add($"G1 {line.Q} E{filamentUsed / FilamentMultiplier}");
+                                toFile.Add($"G1 {line.Q} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
                             }
 
                             //Infill
@@ -212,7 +216,7 @@ namespace Slicer
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G0 Z{(i+1) * layerHeight}");
                                         filamentUsed += line.GetLength();
-                                        toFile.Add($"G1 F1800 {ptB} E{filamentUsed / FilamentMultiplier}");
+                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
                                     }
                                 }
 
@@ -234,7 +238,7 @@ namespace Slicer
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G0 Z{(i+1) * layerHeight}");
                                         filamentUsed += line.GetLength();
-                                        toFile.Add($"G1 F1800 {ptB} E{filamentUsed / FilamentMultiplier}");
+                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
                                     }
                                 }
                         }
