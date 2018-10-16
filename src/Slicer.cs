@@ -16,7 +16,7 @@ namespace Slicer
     {
         private const float FilamentArea = 0.765625f * (float) Math.PI;
         private const float FilamentDensity = 1.25f;
-        private const float FilamentMultiplier = 26.221169f;
+        private const float FilamentMultiplier = 28.0f;
         private const float LineWidth = 0.4f;
         
         /// <summary>
@@ -204,9 +204,9 @@ namespace Slicer
                                     {
                                         if (segB.Equals(segA) || !segB.IntersectsX(x)) continue;
                                         Point2D ptA = segA.FindYIntersect(x);
-                                        ptA.Y += LineWidth;
                                         Point2D ptB = segB.FindYIntersect(x);
-                                        ptB.Y -= LineWidth;
+                                        ptA.Y += ptA.Y > ptB.Y ? -LineWidth : LineWidth;
+                                        ptB.Y += ptA.Y > ptB.Y ? LineWidth : -LineWidth;
                                         Segment line = new Segment(ptA, ptB);
                                         toFile.Add($"G0 F4320 Z{(i+2) * layerHeight}");
                                         toFile.Add($"G0 {ptA}");
@@ -226,9 +226,9 @@ namespace Slicer
                                     {
                                         if (segB.Equals(segA) || !segB.IntersectsY(y)) continue;
                                         Point2D ptA = segA.FindXIntersect(y);
-                                        ptA.X += LineWidth;
                                         Point2D ptB = segB.FindXIntersect(y);
-                                        ptB.X -= LineWidth;
+                                        ptA.X += ptA.X > ptB.X ? -LineWidth : LineWidth;
+                                        ptB.X += ptA.X > ptB.X ? LineWidth : -LineWidth;
                                         Segment line = new Segment(ptA, ptB);
                                         toFile.Add($"G0 F4320 Z{(i+2) * layerHeight}");
                                         toFile.Add($"G0 {ptA}");
