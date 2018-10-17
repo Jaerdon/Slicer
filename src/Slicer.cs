@@ -33,8 +33,9 @@ namespace Slicer
         /// <param name="bedY"></param>
         public void SliceByLayer(Model3D model, float layerHeight, float infillPercent, ExportFormat format, float hotEndTemp, float bedTemp, float bedX, float bedY)
         {
-            float filamentMultiplier = (1.2f * layerHeight * NozzleWidth) / ((float)Math.PI * FilamentDiameter * FilamentDiameter);
-            float filamentOffset = NozzleWidth * (float) Math.PI;
+            float filamentMultiplier = 4.0f * layerHeight * NozzleWidth /
+                                       (1.2f * FilamentDiameter * FilamentDiameter * (float) Math.PI);
+            //float filamentOffset = 1.2f * NozzleWidth * (float) Math.PI;
             
             List<string> toFile = new List<string>();
             float height = 0.0f;
@@ -194,7 +195,7 @@ namespace Slicer
                             foreach (Segment line in polyline.Sides)
                             {
                                 filamentUsed += line.GetLength();
-                                toFile.Add($"G1 {line.Q} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
+                                toFile.Add($"G1 {line.Q} E{filamentMultiplier * (filamentUsed)}");
                             }
 
                             //Infill
@@ -216,7 +217,7 @@ namespace Slicer
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G0 Z{(i+1) * layerHeight}");
                                         filamentUsed += line.GetLength();
-                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
+                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * (filamentUsed)}");
                                     }
                                 }
 
@@ -238,7 +239,7 @@ namespace Slicer
                                         toFile.Add($"G0 {ptA}");
                                         toFile.Add($"G0 Z{(i+1) * layerHeight}");
                                         filamentUsed += line.GetLength();
-                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * (filamentUsed + filamentOffset)}");
+                                        toFile.Add($"G1 F1800 {ptB} E{filamentMultiplier * filamentUsed}");
                                     }
                                 }
                         }
