@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Slicer.Formats;
 using Slicer.Geometry;
 using Slicer.models;
@@ -18,7 +19,7 @@ namespace Slicer
         private const float FilamentDiameter = 1.75f;
         private const float FilamentArea = 0.765625f * (float) Math.PI;
         private const float FilamentDensity = 1.25f;
-        private const float LineWidth = 0.4f;
+        private const float LineWidth = NozzleWidth * 1.2f;
         
         /// <summary>
         ///     Slices model
@@ -66,9 +67,17 @@ namespace Slicer
             model.Translate(-minX, -minY, -1.0f);
 
             maxX -= minX;
-            maxY -= minY; 
-            minX = 0.0f;
-            minY = 0.0f;
+            maxY -= minY;
+            
+            var xDist = maxX;
+            var yDist = maxY;
+            
+            model.Translate(bedX / 2 - xDist / 2, bedY / 2 - yDist / 2, 0.0f);
+            
+            maxX = bedX / 2 + xDist / 2;
+            minX = bedX / 2 - xDist / 2;
+            maxY = bedY / 2 + yDist / 2;
+            minY = bedY / 2 - yDist / 2;
 
             float infillDiff = 10 * infillPercent;
 
@@ -188,6 +197,7 @@ namespace Slicer
                         foreach (Polyline polyline in layers[i])
                         {
                             toFile.Add("; Polyline");
+                            
                             //Outer Walls
                             toFile.Add("; Walls");
                             toFile.Add($"G0 F4320 {polyline.Sides[0].P}");
@@ -195,7 +205,7 @@ namespace Slicer
                             foreach (Segment line in polyline.Sides)
                             {
                                 filamentUsed += line.GetLength();
-                                toFile.Add($"G1 {line.Q} E{filamentMultiplier * (filamentUsed)}");
+                                toFile.Add($"G1 {line.Q} E{filamentMultiplier * (filamentUsed * 1.2)}");
                             }
 
                             //Infill

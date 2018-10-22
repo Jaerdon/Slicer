@@ -32,8 +32,8 @@ namespace Slicer
                 float temp = 200.0f;
                 float bed = 60.0f;
 
-                float bedX = 200.0f;
-                float bedY = 200.0f;
+                float bedX = 120.0f;
+                float bedY = 120.0f;
 
                 ExportFormat format = ExportFormat.GCode;
 
