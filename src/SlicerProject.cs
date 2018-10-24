@@ -62,7 +62,7 @@ namespace Slicer
                         else if (args[i].Equals("-l") || args[i].Equals("--layerheight"))
                             layerHeight = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-i") || args[i].Equals("--infill"))
-                            infill = float.Parse(args[i + 1]);
+                            infill = float.Parse(args[i + 1]) / 100;
                         else if (args[i].Equals("-t") || args[i].Equals("--temp"))
                             temp = float.Parse(args[i + 1]);
                         else if (args[i].Equals("-b") || args[i].Equals("--bed"))
@@ -120,9 +120,9 @@ namespace Slicer
                               "-l [n], --layerheight [n]        set layer height to n, default is 0.2mm\n" +
                               "-t [n], --temp [n]               set hot-end temp to n (Celsius), default is 200C\n" +
                               "-b [n], --bed [n]                set bed temp to n (Celsius), default is 0C\n" +
-                              "-i [n], --infill [n]             set infill percentage to n, default is 15% (0.25)\n" +
-                              "-x [n], --xLength [n]            define bed x length as n, default is 200mm\n" +
-                              "-y [n], --yLength [n]            define bed y length as n, default is 200mm\n" +
+                              "-i [n], --infill [n]             set infill percentage to n, default is 25%\n" +
+                              "-x [n], --xLength [n]            define bed x length as n, default is 120mm\n" +
+                              "-y [n], --yLength [n]            define bed y length as n, default is 120mm\n" +
                               "-f [format], --format [format]   change export format type, default is GCode (ex. GCode, SVG)\n" +
                               "\n-h, --help display this help\n");
         }
